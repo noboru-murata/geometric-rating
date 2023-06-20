@@ -15,9 +15,9 @@ regarded as maximum likelihood estimation of multinomial distributions
 with incomplete observation data.
 
 #+begin_quote
-"An estimation of generalized Bradley-Terry models based on the em algorithm"\\
-Fujimoto, Y., Hino, H., Murata, N.\\
-/Neural Computation/\\
-Volume 23, Issue 6, June 2011, Pages 1623-1659\\
+Fujimoto, Y., Hino, H., Murata, N.:
+"An estimation of generalized Bradley-Terry models based on the em algorithm",
+/Neural Computation/,
+Volume 23, Issue 6, June 2011, Pages 1623-1659.
 [[https://doi.org/10.1162/NECO_a_00129]]
 #+end_quote

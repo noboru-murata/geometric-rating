@@ -20,7 +20,7 @@
 #+BEAMER_HEADER: \usepackage[toc=none]{mytalk}
 # #+BEAMER_HEADER: \usepackage[toc=none,font=heavy]{mytalk}
 #+BEAMER_HEADER: \addbibresource{papers.bib}
-#+BEAMER_HEADER: \graphicspath{{figs/},{refs/}}
+#+BEAMER_HEADER: \graphicspath{{figs/}{refs/}}
 #+BEAMER_HEADER: \DeclareGraphicsExtensions{.pdf,.png,.eps,.jpg}
 #+BEAMER_HEADER: \institute{\url{https://noboru-murata.github.io/}}
 # #+BEAMER_HEADER: \institute[WASEDA]{Waseda University\\\url{https://noboru-murata.github.io/}}

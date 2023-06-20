@@ -1,4 +1,4 @@
-% Created 2023-06-20 Tue 14:08
+% Created 2023-06-20 Tue 17:56
 % Intended LaTeX compiler: pdflatex
 \documentclass[fleqn,aspectratio=1610]{beamer}
 \author{Noboru Murata}
@@ -7,7 +7,7 @@
 \subtitle{Information Geometry of ranking problem}
 \usepackage[toc=none]{mytalk}
 \addbibresource{papers.bib}
-\graphicspath{{figs/},{refs/}}
+\graphicspath{{figs/}{refs/}}
 \DeclareGraphicsExtensions{.pdf,.png,.eps,.jpg}
 \institute{\url{https://noboru-murata.github.io/}}
 \hypersetup{
@@ -26,11 +26,11 @@
 
 
 \section{Introduction}
-\label{sec:org16118c6}
+\label{sec:orgd364013}
 \subsection{Bradley-Terry model}
-\label{sec:orgc352d1d}
-\begin{frame}[label={sec:orge50f9df}]{Rating Problem}
-\begin{exampleblock}{Win-Loss Standings of MLB (American East)}\label{sec:orgccb0e9b}
+\label{sec:orgd37efe4}
+\begin{frame}[label={sec:orgd9b90f4}]{Rating Problem}
+\begin{exampleblock}{Win-Loss Standings of MLB (American East)}\label{sec:org160a4a1}
 \begin{center}
 \begin{tabular}{l|rrrrr}
 \hline
@@ -53,7 +53,7 @@ Orioles & 7 & 8 & 5 & \alert{?} & -\\[0pt]
 \end{alertblock}
 \end{frame}
 
-\begin{frame}[label={sec:org5218e6f}]{Bradley-Terry Model}
+\begin{frame}[label={sec:orgaea9724}]{Bradley-Terry Model}
 notations:
 \begin{itemize}
 \item \(i\): a member of \(k\) individuals\\[0pt]
@@ -74,8 +74,8 @@ i.e. the number of times that \(i\) beats \(j\) \\[0pt]
 \end{frame}
 
 \subsection{conventional estimation algorithm}
-\label{sec:orgb892444}
-\begin{frame}[label={sec:org1454c83}]{Estimation Strategy}
+\label{sec:org311c064}
+\begin{frame}[label={sec:orgcb20136}]{Estimation Strategy}
 \begin{columns}
 \begin{column}{0.5\columnwidth}
 \begin{itemize}
@@ -110,7 +110,7 @@ i.e. the number of times that \(i\) beats \(j\) \\[0pt]
 \end{columns}
 \end{frame}
 
-\begin{frame}[label={sec:org9ad38ba}]{Estimation Method}
+\begin{frame}[label={sec:orgdc2c086}]{Estimation Method}
 conventional algorithm
 (\cite{HastieTibshirani1998})
 \begin{itemize}
@@ -140,10 +140,10 @@ conventional algorithm
 
 
 \section{Problem Formulation}
-\label{sec:org62bed98}
+\label{sec:orgba9c6b4}
 \subsection{geometrical overview}
-\label{sec:org9e8f4ed}
-\begin{frame}[label={sec:org0327143}]{Geometrical Approach}
+\label{sec:org1505070}
+\begin{frame}[label={sec:org3ca74f7}]{Geometrical Approach}
 basic ideas (\cite{FujimotoHinoMurata2011})
 \begin{itemize}
 \item BT model parameter can be identified with a multinomial distribution
@@ -158,7 +158,7 @@ iterative \(e\) and \(m\)-projections
 \end{alertblock}
 \end{frame}
 
-\begin{frame}[label={sec:org01b14c4}]{Probability Simplex}
+\begin{frame}[label={sec:org78796f1}]{Probability Simplex}
 \begin{columns}
 \begin{column}{0.5\columnwidth}
 \begin{center}
@@ -179,7 +179,7 @@ example: \(k=3\)
 \end{columns}
 \end{frame}
 
-\begin{frame}[label={sec:org7ceb419}]{Conventional Loss}
+\begin{frame}[label={sec:org06d97f9}]{Conventional Loss}
 \begin{columns}
 \begin{column}{0.5\columnwidth}
 \begin{center}
@@ -204,7 +204,7 @@ from \(\theta_{ij}=\{\theta_i,\theta_j\}\)
 \end{columns}
 \end{frame}
 
-\begin{frame}[label={sec:org5922d5c}]{Conventional Algorithm}
+\begin{frame}[label={sec:org40fc98b}]{Conventional Algorithm}
 \begin{columns}
 \begin{column}{0.5\columnwidth}
 \begin{center}
@@ -222,7 +222,7 @@ from \(\theta_{ij}=\{\theta_i,\theta_j\}\)
 \end{columns}
 \end{frame}
 
-\begin{frame}[label={sec:org89ca733}]{Geometrical Loss}
+\begin{frame}[label={sec:orgd4a103f}]{Geometrical Loss}
 \begin{columns}
 \begin{column}{0.5\columnwidth}
 \begin{center}
@@ -259,7 +259,7 @@ by integrating all \(\tilde\theta_{ij}\)'s
 \end{columns}
 \end{frame}
 
-\begin{frame}[label={sec:org014b3ec}]{Geometrical Algorithm}
+\begin{frame}[label={sec:org99a0a1d}]{Geometrical Algorithm}
 \begin{columns}
 \begin{column}{0.5\columnwidth}
 \begin{center}
@@ -291,7 +291,7 @@ where \(w_{ij}=(n_{ij}+n_{ji})\)
 \end{columns}
 \end{frame}
 
-\begin{frame}[label={sec:orgdc2a11c}]{Decomposition of Multinomial Distribution}
+\begin{frame}[label={sec:org92196ef}]{Decomposition of Multinomial Distribution}
 \begin{columns}
 \begin{column}{0.5\columnwidth}
 \begin{center}
@@ -313,7 +313,7 @@ on \(\{i,j\}\) and the rest
 \end{columns}
 \end{frame}
 
-\begin{frame}[label={sec:org82052a7}]{What is essential difference?}
+\begin{frame}[label={sec:org0d7252f}]{What is essential difference?}
 \begin{itemize}
 \item conventional method
 \begin{equation}
@@ -337,11 +337,11 @@ on \(\{i,j\}\) and the rest
 
 
 \section{Illustrative Example}
-\label{sec:orgaccb373}
+\label{sec:org2ca4699}
 \subsection{reguralization property}
-\label{sec:org7d98b76}
-\begin{frame}[label={sec:org716a675}]{Estimation Difference}
-\begin{exampleblock}{Example from Hastie \& Tibshirani (1998)}\label{sec:org9cf1193}
+\label{sec:orgff55c09}
+\begin{frame}[label={sec:orgf099b49}]{Estimation Difference}
+\begin{exampleblock}{Example from Hastie \& Tibshirani (1998)}\label{sec:orgde71173}
 \begin{center}
 \begin{tabular}{r|rrrr}
 \hline
@@ -366,7 +366,7 @@ on \(\{i,j\}\) and the rest
 \end{equation}
 \end{itemize}
 \end{frame}
-\begin{frame}[label={sec:org88074be}]{Effect of Regularization}
+\begin{frame}[label={sec:org133e023}]{Effect of Regularization}
 \begin{itemize}
 \item conventional estimates: \(\{0.29,0.34,0.16,0.21\}\)
 \item geometrical estimates: \(\{0.32,0.29,0.15,0.23\}\)
@@ -390,8 +390,8 @@ on \(\{i,j\}\) and the rest
 \end{frame}
 
 \subsection{weight adaptation with local influence}
-\label{sec:org9402a2b}
-\begin{frame}[label={sec:org46f6033}]{Weight Adaptation}
+\label{sec:org615711b}
+\begin{frame}[label={sec:org6a11bd8}]{Weight Adaptation}
 \begin{itemize}
 \item generic form of objective
 \begin{equation}
@@ -409,7 +409,7 @@ on \(\{i,j\}\) and the rest
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:org7a774cd}]{Conventional Method}
+\begin{frame}[label={sec:org2e78561}]{Conventional Method}
 proposal in Hastie \& Tibshirani (1998)
 \begin{columns}
 \begin{column}{0.5\columnwidth}
@@ -434,7 +434,7 @@ variances of pairwise comparisons
 \end{columns}
 \end{frame}
 
-\begin{frame}[label={sec:org044c7b1}]{Local Influence}
+\begin{frame}[label={sec:org4ad24d4}]{Local Influence}
 \begin{columns}
 \begin{column}{0.5\columnwidth}
 \begin{center}
@@ -456,8 +456,8 @@ iterative manner
 \end{columns}
 \end{frame}
 
-\begin{frame}[label={sec:orgb3cfbea}]{Numerical Experiments}
-\begin{exampleblock}{Synthetic data in Hastie \& Tibshirani (1998)}\label{sec:org6d1fa32}
+\begin{frame}[label={sec:org24fce20}]{Numerical Experiments}
+\begin{exampleblock}{Synthetic data in Hastie \& Tibshirani (1998)}\label{sec:orgcf9a205}
 \begin{align}
   P^*_A
   &=\left\{\pi^*_i \biggm| \pi^*_1=\frac{1.5}{k},
@@ -475,7 +475,7 @@ iterative manner
 \end{exampleblock}
 \end{frame}
 
-\begin{frame}[label={sec:org84b0638}]{Numerical Experiments}
+\begin{frame}[label={sec:org65ffb58}]{Numerical Experiments}
 \begin{center}
   \includegraphics[width=.29\textwidth,trim=0 40 20 40,clip=true]{kl_earlier_a}
   \includegraphics[width=.29\textwidth,trim=0 40 20 40,clip=true]{kl_earlier_b}
@@ -490,9 +490,9 @@ iterative manner
 \end{frame}
 
 \subsection{grouped ranking data}
-\label{sec:orgba23e82}
-\begin{frame}[label={sec:orgc35c1fc}]{Grouped Ranking Data}
-\begin{exampleblock}{Movie Rating Data}\label{sec:org38b511a}
+\label{sec:org66156e8}
+\begin{frame}[label={sec:org6a1b44b}]{Grouped Ranking Data}
+\begin{exampleblock}{Movie Rating Data}\label{sec:orgae59753}
 \begin{center}
 \begin{tabular}{l|rrrrl}
  & Toy Story & Star Wars & Braveheart & The Saint & \(\ldots\)\\[0pt]
@@ -514,8 +514,8 @@ characteristics of data
 \end{itemize}
 \end{quote}
 \end{frame}
-\begin{frame}[label={sec:org13b6d5b}]{Grouped Ranking Data}
-\begin{exampleblock}{Movie Rating Data}\label{sec:org6273bd0}
+\begin{frame}[label={sec:orgfc348fa}]{Grouped Ranking Data}
+\begin{exampleblock}{Movie Rating Data}\label{sec:org023b5d1}
 \begin{center}
 \begin{tabular}{l|rrrrl}
  & Toy Story & Star Wars & Braveheart & The Saint & \(\ldots\)\\[0pt]
@@ -535,7 +535,7 @@ David & 3 & 4 & 3 & 3 & \\[0pt]
 \end{itemize}
 \end{alertblock}
 \end{frame}
-\begin{frame}[label={sec:orgf065d68}]{Hidden Ordering}
+\begin{frame}[label={sec:org1d851b4}]{Hidden Ordering}
 marginalize with respect to hidden ordering (\cite{HinoFujimotoMurata2010})
 
 \begin{itemize}
@@ -558,7 +558,7 @@ marginalize with respect to hidden ordering (\cite{HinoFujimotoMurata2010})
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:orge44554a}]{Problem Formulation}
+\begin{frame}[label={sec:orge36146d}]{Problem Formulation}
 notations:
 \begin{itemize}
 \item \(R_i^n\): 
@@ -578,7 +578,7 @@ a set of possible permutations for \(\mathcal{D}^n\)
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:org1af96c9}]{Grouped-Ranking Model}
+\begin{frame}[label={sec:org032c885}]{Grouped-Ranking Model}
 \begin{itemize}
 \item likelihood:
 \begin{align}
@@ -596,7 +596,7 @@ with the number of items \alert{exponentially}
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:orgd069a0a}]{Approximation}
+\begin{frame}[label={sec:orgb42c534}]{Approximation}
 \begin{itemize}
 \item bound below with tractable calculation
 \item exclude marginalization of permutation
@@ -617,7 +617,7 @@ parameter\\[0pt]
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:org607cc6c}]{Further Approximation}
+\begin{frame}[label={sec:org9fe243d}]{Further Approximation}
 \begin{itemize}
 \item decompose the objective into small optimization problems: 
 \begin{align}
@@ -635,7 +635,7 @@ which is as consistent with those solutions as possible
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:org941c208}]{Estimation Method}
+\begin{frame}[label={sec:org2b4d117}]{Estimation Method}
 \begin{columns}
 \begin{column}{0.5\columnwidth}
 \begin{center}
@@ -656,7 +656,7 @@ which is as consistent with those solutions as possible
 \end{columns}
 \end{frame}
 
-\begin{frame}[label={sec:orga5ac0e2}]{Item Mapping}
+\begin{frame}[label={sec:org6539764}]{Item Mapping}
 \begin{columns}
 \begin{column}{0.6\columnwidth}
 \begin{center}
@@ -679,7 +679,7 @@ which is as consistent with those solutions as possible
 \end{columns}
 \end{frame}
 
-\begin{frame}[label={sec:org916c776}]{Item-User Mapping}
+\begin{frame}[label={sec:org7c260bd}]{Item-User Mapping}
 \begin{columns}
 \begin{column}{0.6\columnwidth}
 \begin{center}
@@ -697,8 +697,8 @@ which is as consistent with those solutions as possible
 
 
 \section{Conclusion}
-\label{sec:org44c9e3c}
-\begin{frame}[label={sec:org4d493c4}]{Concluding Remarks}
+\label{sec:org35390e9}
+\begin{frame}[label={sec:orga4bb9c6}]{Concluding Remarks}
 we presented the following
 \begin{itemize}
 \item a geometrical reformulation of the estimation procedure 
