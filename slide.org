@@ -1,0 +1,749 @@
+#+TITLE: A geometrical extension of the Bradley-Terry model
+#+SUBTITLE: Information Geometry of ranking problem
+#+AUTHOR: Noboru Murata
+#+EMAIL: noboru.murata@gmail.com
+#+DATE: \today
+#+DESCRIPTION: 
+#+KEYWORDS: information geometry, Bradley-Terry model
+#+LANGUAGE: en
+#+STARTUP: beamer hidestars content indent
+:BEAMER:
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS: TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+# #+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:https://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+HTML_LINK_UP:
+#+HTML_LINK_HOME:
+#+LaTeX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [fleqn,aspectratio=1610]
+#+BEAMER_HEADER: \usepackage[toc=none]{mytalk}
+# #+BEAMER_HEADER: \usepackage[toc=none,font=heavy]{mytalk}
+#+BEAMER_HEADER: \addbibresource{papers.bib}
+#+BEAMER_HEADER: \graphicspath{{figs/},{refs/}}
+#+BEAMER_HEADER: \DeclareGraphicsExtensions{.pdf,.png,.eps,.jpg}
+#+BEAMER_HEADER: \institute{\url{https://noboru-murata.github.io/}}
+# #+BEAMER_HEADER: \institute[WASEDA]{Waseda University\\\url{https://noboru-murata.github.io/}}
+# #+BEAMER_HEADER: \titlegraphic{\includegraphics[height=1.5cm]{symbol_waseda_3.jpg}
+# #+BEAMER_HEADER:    \includegraphics[height=1.5cm,viewport=0 0 150 150,clip]{UTlogo.jpg}
+# #+BEAMER_HEADER:    \includegraphics[height=1.5cm]{nict-logo-new2.png}}
+# #+BEAMER_HEADER: \myLogo{\lower9pt\hbox{
+# #+BEAMER_HEADER:    \reflectbox{\includegraphics[height=26pt]{milk_gray.png}}
+# #+BEAMER_HEADER:    \kern-8pt\includegraphics[height=18pt,width=22pt]{milk_sepia.png}}}
+#+COLUMNS: "%45ITEM %10BEAMER_env(Env) %10BEAMER_act(Act) %4BEAMER_col(Col) %8BEAMER_opt(Opt)"
+# column view: C-c C-x C-c / C-c C-c or q
+# beamer block: C-c C-b
+:END:
+
+* Introduction
+** Bradley-Terry model
+*** Rating Problem
+**** Win-Loss Standings of MLB (American East)            :B_exampleblock:
+:PROPERTIES:
+:BEAMER_env: exampleblock
+:END:
+|-----------+---------+------+---------+-----------+---------|
+|           | Yankees | Rays | Red Sox | Blue Jays | Orioles |
+|-----------+---------+------+---------+-----------+---------|
+| /         |       < |      |         |           |         |
+| Yankees   |       - |    6 |       8 |         9 |       5 |
+| Rays      |       8 |    - |       7 |         8 |       7 |
+| Red Sox   |       6 |    9 |       - |         8 |       9 |
+| Blue Jays |       5 |    4 |       4 |         - |     *?* |
+| Orioles   |       7 |    8 |       5 |       *?* |       - |
+|-----------+---------+------+---------+-----------+---------|
+**** Problem                                                :B_alertblock:
+:PROPERTIES:
+:BEAMER_env: alertblock
+:BEAMER_act: <2>
+:END:
+- estimate intrinsic strengths of teams 
+- predict results of unobserved matches 
+
+*** Bradley-Terry Model
+notations:
+- \(i\): a member of \(k\) individuals\\
+  (\emph{e.g. baseball team})
+- \(\theta_{i}\): skill of individual \(i\)\\
+  \emph{(e.g. strength of team)}
+- probability model (binomial distribution): 
+  \begin{equation}
+    \Pr\left\{\text{\(i\) beats \(j\)}\right\}
+    =\Pr(i\succ j)
+    =\frac{\theta_{i}}{\theta_{i}+\theta_{j}},
+  \end{equation}
+  \emph{(e.g. win-loss probability between teams \(i\) and \(j\))}
+- \(n_{ij}\): observation,
+  i.e. the number of times that \(i\) beats \(j\) \\
+  (\cite{BradleyTerry1952})
+
+** conventional estimation algorithm
+*** Estimation Strategy
+**** left                                                          :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+- two sets of binomial distributions
+  - data: \(\mathcal{D}_{ij}=\{n_{ij},n_{ji}\}\) 
+    \begin{equation}
+      P^{(b)}_{\mathcal{D}_{ij}}(i\succ j)
+      =\frac{n_{ij}}{n_{ij}+n_{ji}}
+    \end{equation}
+  - model: \(\theta_{ij}=\{\theta_i,\theta_j\}\) 
+    \begin{equation}
+      P^{(b)}_{\theta_{ij}}(i\succ j)
+      =\frac{\theta_i}{\theta_i+\theta_j}
+    \end{equation}
+- compare distributions
+  - discrepancy (KL divergence):
+    \begin{equation}
+      \mathrm{Dist}(\{n_{ij},n_{ji}\},\{\theta_i,\theta_j\})
+      =D(P^{(b)}_{\mathcal{D}_{ij}},P^{(b)}_{\theta_{ij}})
+    \end{equation}
+**** right                                                         :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+#+begin_center
+\includegraphics[width=.85\textwidth]{binomial_comp}
+#+end_center
+
+*** Estimation Method
+conventional algorithm
+(\cite{HastieTibshirani1998})
+- objectives: likelihood of binomial distribution
+  \begin{align}
+    L(\theta)
+    &=-\sum_{i<j}\left(
+      n_{ij}\log\frac{\theta_{i}}{\theta_{i}+\theta_{j}}+
+      n_{ji}\log\frac{\theta_{j}}{\theta_{i}+\theta_{j}}
+      \right)\\
+    &=\sum_{i<j}(n_{ij}+n_{ji})
+      D(P^{(b)}_{\mathcal{D}_{ij}},P^{(b)}_{\theta_{ij}})
+      +const.
+  \end{align}
+- iterative updates:
+  - calculate:
+    \begin{equation}
+      \theta_{i}
+      \leftarrow\frac{\sum_{j\not=i}n_{ij}}
+      {\sum_{j\not=i}\frac{n_{ij}+n_{ji}}{\theta_{i}+\theta_{j}}}
+    \end{equation}
+  - re-normalize: \(\|\theta\|_{1}=1\)
+
+
+* Problem Formulation
+** geometrical overview
+*** Geometrical Approach
+  basic ideas (\cite{FujimotoHinoMurata2011})
+  - BT model parameter can be identified with a multinomial distribution
+  - <2-| alert@2>[] a point on the probability simplex
+  - pairwise comparison data can be regarded as 
+    incomplete data from multinomial distributions
+  - <2-| alert@2>[] an \(m\)-flat manifold in the probability simplex
+**** \(em\)-Algorithm (Amari, 1995)                         :B_alertblock:
+:PROPERTIES:
+:BEAMER_env: alertblock
+:BEAMER_act: <3->
+:END:
+optimal parameter can be obtained by means of
+iterative \(e\) and \(m\)-projections
+
+*** Probability Simplex
+**** left                                                          :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+\begin{center}
+  \includegraphics<+>[page=1,width=\textwidth]{simplex}%
+  \includegraphics<+>[page=2,width=\textwidth]{simplex}%
+  \includegraphics<+>[page=3,width=\textwidth]{simplex}%
+\end{center}
+**** right                                                         :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+example: \(k=3\)
+- <2-> \(\theta_i\geq0\) (positivity)
+- <2-> \(\sum\theta_i=1\) (normalized)
+- <3-> estimate \(\hat\theta\) \\
+  (a point in the simplex)
+
+*** Conventional Loss
+**** left                                                          :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+\begin{center}
+  % \includegraphics<+>[page=1,width=\textwidth]{triangle}%
+  \includegraphics<+>[page=2,width=\textwidth]{triangle}%
+  \includegraphics<+>[page=1,width=\textwidth]{conventional}%
+  \includegraphics<+>[page=2,width=\textwidth]{conventional}%
+  \includegraphics<+>[page=3,width=\textwidth]{conventional}%
+  \includegraphics<+>[page=4,width=\textwidth]{conventional}%
+\end{center}
+**** right                                                         :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+- <1-> \(\hat\theta\): current estimate
+- <2-> construct \(P^{(b)}_{\mathcal{D}_{ij}}\)
+  from \(\mathcal{D}_{ij}=\{n_{ij},n_{ji}\}\) 
+- <3-> construct \(P^{(b)}_{\theta_{ij}}\)
+  from \(\theta_{ij}=\{\theta_i,\theta_j\}\) 
+- <4-|alert@4-> compare all the possible pairs 
+
+*** Conventional Algorithm
+**** left                                                          :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+\begin{center}
+  \includegraphics<+>[page=5,width=\textwidth]{conventional}%
+  \includegraphics<+>[page=6,width=\textwidth]{conventional}%
+  \includegraphics<+>[page=7,width=\textwidth]{conventional}%
+\end{center}        
+**** right                                                         :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+- <1-> initialize parameter
+- <2-> update parameter to reduce total loss
+
+*** Geometrical Loss
+**** left                                                          :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+\begin{center}
+  % \includegraphics<+>[page=1,width=\textwidth]{triangle}%
+  \includegraphics<+>[page=2,width=\textwidth]{triangle}%
+  \includegraphics<+>[page=1,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=2,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=3,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=4,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=5,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=6,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=7,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=8,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=9,width=\textwidth]{geometrical}%
+\end{center}
+
+**** right                                                         :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+- <1-> \(\hat\theta\): current estimate
+- <2-> for \(\mathcal{D}_{ij}=\{n_{ij},n_{ji}\}\), 
+- <3-|alert@3,5,7>[] consider a set of \(\theta\)'s
+  \begin{equation}
+    D_{ij}
+    =\{\theta|\theta_i\!:\!\theta_j=n_{ij}\!:\!n_{ji}\},
+  \end{equation}
+  which are consistent with pairwise comparison
+- <4-|alert@4,6,8-9> choose the closest point \(\tilde\theta_{ij}\) in \(D_{ij}\) 
+  from \(\hat\theta\)
+- <10-|alert@10-> obtain \(\hat\theta\)
+  by integrating all \(\tilde\theta_{ij}\)'s
+
+*** Geometrical Algorithm
+**** left                                                          :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+\begin{center}
+  \includegraphics<+>[page=10,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=11,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=12,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=13,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=14,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=15,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=16,width=\textwidth]{geometrical}%
+\end{center}
+**** right                                                         :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+- <1-> initialize parameter
+- <2,4,6,7> \(e\)-projection:
+  \begin{equation}
+    \tilde\theta_{ij}=\arg\min_{\theta\in D_{ij}}
+    D(P_{\theta},P_{\hat\theta})
+  \end{equation}
+- <3,5,7> \(m\)-projection:
+  \begin{equation}
+    \hat\theta=\arg\min_{\theta}
+    \sum_{i,j}w_{ij}D(P_{\tilde\theta_{ij}},P_{\theta})
+  \end{equation}
+  where \(w_{ij}=(n_{ij}+n_{ji})\)
+
+*** Decomposition of Multinomial Distribution
+**** left                                                          :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+\begin{center}
+  \includegraphics<+>[width=\textwidth]{decomp}%
+\end{center}
+**** right                                                         :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+\begin{equation}
+  P(\theta)=P_{\theta_{ij}}^{(b)}
+  \times P_{\theta_{ij}}^{(r)}
+\end{equation}
+- \(P_{\theta_{ij}}^{(b)}\): binomial distribution
+  on \(i\) and \(j\) 
+- \(P_{\theta_{ij}}^{(r)}\): multinomial distribution 
+  on \(\{i,j\}\) and the rest
+
+*** What is essential difference?
+- conventional method
+  \begin{equation}
+    \hat\theta
+    =\arg\min_{\theta}
+    \sum_{i<j} w_{ij}D(P_{\mathcal{D}_{ij}}^{(b)},P_{\theta_{ij}}^{(b)})
+  \end{equation}
+- geometrical method
+  \begin{equation}
+    \hat\theta
+    =\arg\min_{\theta}
+    \sum_{i<j}w_{ij}D(P_{\mathcal{D}_{ij}}^{(b)},P_{\theta_{ij}}^{(b)})
+    +\sum_{i<j}w'_{ij}D(P_{\mathcal{D}_{ij}}^{(r)},P_{\theta_{ij}}^{(r)})
+  \end{equation}
+  - this objective has a unique solution
+  - the second term works as a regularization
+
+
+* Illustrative Example
+** reguralization property
+*** Estimation Difference
+**** Example from Hastie & Tibshirani (1998)              :B_exampleblock:
+:PROPERTIES:
+:BEAMER_env: exampleblock
+:END:
+|---+------+------+------+------|
+|   |    1 |    2 |    3 |    4 |
+|---+------+------+------+------|
+| / |    < |      |      |      |
+| 1 |    - | 0.56 | 0.51 | 0.60 |
+| 2 | 0.44 |    - | 0.96 | 0.44 |
+| 3 | 0.49 | 0.04 |    - | 0.59 |
+| 4 | 0.40 | 0.56 | 0.41 |    - |
+|---+------+------+------+------|
+**** bottom                                              :B_ignoreheading:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:END:
+- <2-> conventional estimates:
+  \begin{equation}
+    \{\hat\theta_{i}\}=\{0.29,0.34,0.16,0.21\}
+  \end{equation}
+- <3-> geometrical estimates:
+  \begin{equation}
+    \{\hat\theta_{i}\}=\{0.32,0.29,0.15,0.23\}
+  \end{equation}
+*** Effect of Regularization
+- conventional estimates: \(\{0.29,0.34,0.16,0.21\}\)
+- geometrical estimates: \(\{0.32,0.29,0.15,0.23\}\)
+#+begin_center
+|-------+-------+-----------------+-----------------+---------------+------------+------------|
+| \(i\) | \(j\) | \(P(i\succ j)\) | \(P(j\succ i)\) | majority rule | conv.      | geom.      |
+|-------+-------+-----------------+-----------------+---------------+------------+------------|
+|     / |       |               < |                 | <             | <          |            |
+|     1 |     2 |            0.56 |            0.44 | \(1 \succ 2\) | \(\times\) | \(\surd\)  |
+|     1 |     3 |            0.51 |            0.49 | \(1 \succ 3\) | \(\surd\)  | \(\surd\)  |
+|     1 |     4 |            0.60 |            0.40 | \(1 \succ 4\) | \(\surd\)  | \(\surd\)  |
+|     2 |     3 |            0.96 |            0.04 | \(2 \succ 3\) | \(\surd\)  | \(\surd\)  |
+|     2 |     4 |            0.44 |            0.56 | \(2 \prec 4\) | \(\times\) | \(\times\) |
+|     3 |     4 |            0.59 |            0.41 | \(3 \succ 4\) | \(\times\) | \(\times\) |
+|-------+-------+-----------------+-----------------+---------------+------------+------------|
+#+end_center   
+
+** weight adaptation with local influence
+*** Weight Adaptation
+- generic form of objective
+  \begin{equation}
+    L(\theta)
+    =\sum_{i<j} w_{ij}D(P_{\mathcal{D}_{ij}},P_{\theta})
+    % =\sum_{i<j} w_{ij}D(P_{\mathcal{D}_{ij}},P_{\theta_{ij}})
+  \end{equation}
+- weight \(w_{ij}\) reflects confidence of data \(\mathcal{D}_{ij}\)
+- possible weights 
+  - data size of pairwise comparison
+  - empirical influence of data
+  - etc
+
+*** Conventional Method
+proposal in Hastie & Tibshirani (1998)
+**** left                                                          :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+\begin{center}
+  \includegraphics<+>[page=1,width=\textwidth]{influence}%
+  \includegraphics<+>[page=2,width=\textwidth]{influence}%
+\end{center}
+**** right                                                         :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+- <1-> binomial influence
+  \begin{align}
+    w_{ij}
+    &\rightarrow\frac{w_{ij}}{\alpha(1-\alpha)}\\
+    \alpha
+    &=\frac{n_{ij}}{n_{ij}+n_{ji}}
+  \end{align}
+- <2-> weights are renormalized so as to equalize influences from
+  variances of pairwise comparisons 
+
+*** Local Influence
+**** left                                                          :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+\begin{center}
+  \includegraphics<+>[page=3,width=\textwidth]{influence}%
+  \includegraphics<+>[page=4,width=\textwidth]{influence}%
+  \includegraphics<+->[page=5,width=\textwidth]{influence}%
+\end{center}
+**** right                                                         :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+- <1-> influence around \(\hat\theta\) should be considered
+- <2-> fluctuation of data manifold
+- <3-> fluctuation along \(e\)-geodesic is regarded as essential
+  influence 
+- <4-> weights are determined so as to equalize those influences with
+  iterative manner 
+
+*** Numerical Experiments
+**** Synthetic data in Hastie & Tibshirani (1998)         :B_exampleblock:
+:PROPERTIES:
+:BEAMER_env: exampleblock
+:END:
+\begin{align}
+  P^*_A
+  &=\left\{\pi^*_i \biggm| \pi^*_1=\frac{1.5}{k},
+    \pi^*_j=\frac{1-\pi^*_1}{k-1} \ (j=2,\dots,k)
+    \right\} \\
+  P^*_B
+  &=\left\{\pi^*_i \biggm| \pi^*_1=\frac{2.85}{k},\right.\\
+  &\phantom{=====}\left.
+    \pi^*_j=\frac{0.95-\pi^*_1}{k/2-1}\,\left(j=2,\dots,\frac{k}{2}\right),
+    \pi^*_j=\frac{0.05}{k/2}\,\left(j=\frac{k}{2}\!+\! 1,\dots,k\right) \right\} \\
+  P^*_C
+  &=\left\{ \pi^*_i \biggm| \pi^*_1=0.7125, \pi^*_2=0.2375,
+    \pi^*_j=\frac{0.05}{k-2}\,(j = 3, \dots,k)\right\}
+\end{align}
+
+*** Numerical Experiments
+\begin{center}
+  \includegraphics[width=.29\textwidth,trim=0 40 20 40,clip=true]{kl_earlier_a}
+  \includegraphics[width=.29\textwidth,trim=0 40 20 40,clip=true]{kl_earlier_b}
+  \includegraphics[width=.29\textwidth,trim=0 40 20 40,clip=true]{kl_earlier_c}
+  \\
+  \hspace{.07\textwidth}\(P^*_A\)\hspace{.27\textwidth}\(P^*_B\)\hspace{.27\textwidth}\(P^*_C\)
+  \\[4pt]
+  plots of the number of individuals vs.\ \(D(P^*,P_{\hat\theta})\) for \(500\) trials.
+  \\
+  (solid:proposed, dashed:unit, dotted:\# of data,  dotdash:H\&T)
+\end{center}
+
+** grouped ranking data
+*** COMMENT Grouped Ranking Data
+**** Movie Rating Data                                    :B_exampleblock:
+:PROPERTIES:
+:BEAMER_env: exampleblock
+:END:
+|            | Toy Story | Star Wars | Braveheart | The Saint | \(\ldots\) |
+|------------+-----------+-----------+------------+-----------+------------|
+| /          |         < |           |            |           |            |
+| Anne       |         4 |         5 |            |         3 |            |
+| Bob        |           |         5 |          4 |         2 |            |
+| Cathy      |         5 |           |            |         3 |            |
+| David      |         3 |         4 |          3 |         3 |            |
+| \(\vdots\) |           |           |            |           |            |
+**** overprint                                           :B_ignoreheading:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:END:
+#+beamer: \begin{overprint}
+#+beamer: \onslide<2>
+**** notes on data                                               :B_quote:
+:PROPERTIES:
+:BEAMER_env: quote
+:END:
+characteristics of data
+- each *user* gives a rate to each *item*
+- some rates are not available
+- rates are relative values, not absolute evaluation
+**** overprint                                           :B_ignoreheading:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:END:
+#+beamer: \onslide<3>
+**** Problem                                                :B_alertblock:
+:PROPERTIES:
+:BEAMER_env: alertblock
+:END:
+#+BEAMER: \smallskip
+# blockがつまって表示される．たぶんTeX側のbug
+- estimate preference levels of items quantitatively
+- predict preference levels of unrated items
+**** overprint                                           :B_ignoreheading:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:END:
+#+beamer: \end{overprint}
+
+*** COMMENT Grouped Ranking Data
+**** Movie Rating Data                                    :B_exampleblock:
+:PROPERTIES:
+:BEAMER_env: exampleblock
+:BEAMER_act: <1->
+:END:
+#+beamer: \begin{overprint}
+#+beamer: \onslide<1,3>
+|            | Toy Story | Star Wars | Braveheart | The Saint | \(\ldots\) |
+|------------+-----------+-----------+------------+-----------+------------|
+| /          |         < |           |            |           |            |
+| Anne       |         4 |         5 |            |         3 |            |
+| Bob        |           |         5 |          4 |         2 |            |
+| Cathy      |         5 |           |            |         3 |            |
+| David      |         3 |         4 |          3 |         3 |            |
+| \(\vdots\) |           |           |            |           |            |
+#+beamer: \onslide<2>
+#+beamer: \bigskip
+characteristics of data
+- each *user* gives a rate to each *item*
+- some rates are not available
+- rates are relative values, not absolute evaluation
+#+beamer: \end{overprint}
+**** Problem                                                :B_alertblock:
+:PROPERTIES:
+:BEAMER_env: alertblock
+:BEAMER_act: <3>
+:END:
+- estimate preference levels of items quantitatively
+- predict preference levels of unrated items
+
+*** Grouped Ranking Data
+**** Movie Rating Data                                    :B_exampleblock:
+:PROPERTIES:
+:BEAMER_env: exampleblock
+:END:
+|            | Toy Story | Star Wars | Braveheart | The Saint | \(\ldots\) |
+|------------+-----------+-----------+------------+-----------+------------|
+| /          |         < |           |            |           |            |
+| Anne       |         4 |         5 |            |         3 |            |
+| Bob        |           |         5 |          4 |         2 |            |
+| Cathy      |         5 |           |            |         3 |            |
+| David      |         3 |         4 |          3 |         3 |            |
+| \(\vdots\) |           |           |            |           |            |
+**** notes on data                                               :B_quote:
+:PROPERTIES:
+:BEAMER_env: quote
+:BEAMER_act: <2>
+:END:
+characteristics of data
+- each *user* gives a rate to each *item*
+- some rates are not available
+- rates are relative values, not absolute evaluation
+*** Grouped Ranking Data
+**** Movie Rating Data                                    :B_exampleblock:
+:PROPERTIES:
+:BEAMER_env: exampleblock
+:END:
+|            | Toy Story | Star Wars | Braveheart | The Saint | \(\ldots\) |
+|------------+-----------+-----------+------------+-----------+------------|
+| /          |         < |           |            |           |            |
+| Anne       |         4 |         5 |            |         3 |            |
+| Bob        |           |         5 |          4 |         2 |            |
+| Cathy      |         5 |           |            |         3 |            |
+| David      |         3 |         4 |          3 |         3 |            |
+| \(\vdots\) |           |           |            |           |            |
+**** Problem                                                :B_alertblock:
+:PROPERTIES:
+:BEAMER_env: alertblock
+:END:
+- estimate preference levels of items quantitatively
+- predict preference levels of unrated items
+*** Hidden Ordering
+marginalize with respect to hidden ordering (\cite{HinoFujimotoMurata2010})
+# \item a simple BT model does not suit for this problem
+- observed ranking
+  \begin{equation}
+    \{i=j\succ\cdots\succ k\}
+  \end{equation}
+- possible hidden ordering (unobserved)
+  \begin{equation}
+    \{i\succ j\succ\cdots\succ k\}
+    \text{ or }
+    \{j\succ i\succ\cdots\succ k\}
+  \end{equation}
+- marginalize with possible ordering 
+  \begin{equation}
+    P(i=j\succ\cdots\succ k)
+    =P(i\succ j\succ\cdots\succ k)
+    +P(j\succ i\succ\cdots\succ k)
+  \end{equation}
+  
+*** Problem Formulation
+notations:
+- \(R_i^n\): 
+  a rate of item \(i\) evaluated by user \(n\)
+- \(\mathcal{D}^n=\{R_1^n,R_2^n,\dots\}\): 
+  a set of rates given by user \(n\)
+- \(\mathcal{D}=\{\mathcal{D}^1,\mathcal{D}^2,\dots\}\): 
+  all data
+  \medskip
+- \(\theta_i\): preference parameter for item \(i\)
+  - \(\theta_i\ge0\) (positivity)
+  - \(\sum\theta_i=1\) (normalized)
+- \(\mathcal{S}(\mathcal{D}^n)\):
+  a set of possible permutations for \(\mathcal{D}^n\)
+
+*** Grouped-Ranking Model
+- likelihood:
+  \begin{align}
+    P(\mathcal{D})
+    &=\sum_{n}\sum_{\pi\in\mathcal{S}(\mathcal{D}^n)}
+      P(\pi)P(\mathcal{D}^n|\pi)\\
+    &=\sum_{n}\sum_{\pi\in\mathcal{S}(\mathcal{D}^n)}
+      P(\pi)\prod_{i\in\pi}\frac{\theta_i}{\sum_{j\le i\in\pi}\theta_j}
+  \end{align}
+  where \(P(\pi)\) is a prior of permutations\\
+  (marginalized with respect to all the possible ranking in
+  equivalently rated items) 
+- the number of permutations increases 
+  with the number of items *exponentially*
+
+*** Approximation
+- bound below with tractable calculation
+- exclude marginalization of permutation
+  lower bound of likelihood:
+  - \(\Lambda_r^n=\{i|R_i^n=r\}\): an index set of items with rate \(r\)
+    by user \(n\)
+  - \(\Theta_r^n=\sum_{i\in \Lambda_r^n}\theta_i\): group preference
+    parameter\\
+    (total preference of the equivalently rated items)
+  \begin{align}
+    \underline{P}(\mathcal{D})
+    =\sum_{n}\prod_{r}\prod_{i\in \Lambda_r^n}
+    \frac{\theta_i}{\sum_{s\le r}\Theta_s^n}
+  \end{align}
+  *maximizing lower bound is still computationally tedious*
+# of probability of data \(\mathcal{D}\), i.e. likelihood 
+
+*** Further Approximation
+- decompose the objective into small optimization problems: 
+  \begin{align}
+    &\text{minimize}\quad\sum_r|\Lambda_r^n|\log\sum_{s\ge r}\Theta_s^n
+      \quad\text{subject to}\quad\sum_r\Theta_r^n=1\\
+    &\text{maximize}\quad\sum_i\log\theta_i
+      \quad\text{subject to}\quad\sum_i\theta_i=1
+  \end{align}
+- algorithm
+  - find solutions of the minimization problems 
+  - find a parameter of the maximization problem 
+    which is as consistent with those solutions as possible
+
+*** Estimation Method
+**** left                                                          :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+\begin{center}
+  \includegraphics<+>[page=1,width=\textwidth]{group}%
+  \includegraphics<+>[page=2,width=\textwidth]{group}%
+  \includegraphics<+>[page=3,width=\textwidth]{group}%
+\end{center}
+**** right                                                         :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+- <1-> solutions of minimization problems
+  \begin{equation}
+    \mathcal{D}^n=\{\theta|\sum_{i\in\Lambda^n_r}\theta_i=const.\}
+  \end{equation}
+- <3-> find a estimate with geometrical BT method
+
+*** COMMENT estimation
+**** left                                                          :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.6
+:END:
+\begin{center}
+  \includegraphics[width=\textwidth]{NECO-11-09-1129-Figure_7}%
+\end{center}
+**** right                                                         :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.4
+:END:
+- An example of user mapping. Three users are mapped into 2D space
+  as lines defined by 
+
+*** Item Mapping
+**** left                                                          :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.6
+:END:
+\begin{center}
+  \includegraphics[width=.9\textwidth]{NECO-11-09-1129-Figure_6}
+\end{center}
+**** right                                                         :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.4
+:END:
+- preference parameters are modeled as
+  \begin{align}
+    \theta_{iu}
+    &=v_{i}\cdot w_{u}\\
+    &\quad v_{i}\in\mathbb{R}^{d}\text{: item \(i\)},\\
+    &\quad w_{u}\in\mathbb{R}^{d}\text{: user \(u\)}
+  \end{align}
+- \(\circ\) movies
+- typical two axes are used
+
+*** Item-User Mapping
+**** left                                                          :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.6
+:END:
+\begin{center}
+  \includegraphics[width=.9\textwidth]{NECO-11-09-1129-Figure_8}%
+\end{center}
+**** right                                                         :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.4
+:END:
+- \(\circ\) rated by user~\(114\)
+- \(\diamond\) not rated
+
+
+* Conclusion
+*** Concluding Remarks
+we presented the following
+- a geometrical reformulation of the estimation procedure 
+  for the Bradley-Terry model 
+- a robust weight adaptation method
+- an approximate estimation for grouped ranking data
+
+in addition, possible application would be
+- utilizing \(U\)-divergence based on \(m\)-flat nature of data
+    manifolds 
+
+*** References
+:PROPERTIES:
+:BEAMER_opt: allowframebreaks
+:END:
+\printbibliography[heading=none]
+
+
+* COMMENT File Local Variables
+# Local Variables:
+# End:

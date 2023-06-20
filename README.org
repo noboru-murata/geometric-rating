@@ -1,0 +1,23 @@
+* geometric-rating
+
+The Bradley-Terry model is a basic and important probability model for
+rating. Since the parameter assigned to each player is estimated
+based on the number of matches won or lost between the two players, it
+is necessary to perform multiple maximum likelihood estimation of the
+binomial distribution. For this reason, several likelihood designs
+that take into account the weighting by the number of matches have
+been proposed.
+
+We consider the geometry of probability distributions in space, and
+propose an algorithm for parameter estimation in the framework of
+Expectation-Maxmization (exponential-mixture) algorithm, which is
+regarded as maximum likelihood estimation of multinomial distributions
+with incomplete observation data.
+
+#+begin_quote
+"An estimation of generalized Bradley-Terry models based on the em algorithm"\\
+Fujimoto, Y., Hino, H., Murata, N.\\
+/Neural Computation/\\
+Volume 23, Issue 6, June 2011, Pages 1623-1659\\
+[[https://doi.org/10.1162/NECO_a_00129]]
+#+end_quote

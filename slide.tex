@@ -1,0 +1,720 @@
+% Created 2023-06-20 Tue 14:08
+% Intended LaTeX compiler: pdflatex
+\documentclass[fleqn,aspectratio=1610]{beamer}
+\author{Noboru Murata}
+\date{\today}
+\title{A geometrical extension of the Bradley-Terry model}
+\subtitle{Information Geometry of ranking problem}
+\usepackage[toc=none]{mytalk}
+\addbibresource{papers.bib}
+\graphicspath{{figs/},{refs/}}
+\DeclareGraphicsExtensions{.pdf,.png,.eps,.jpg}
+\institute{\url{https://noboru-murata.github.io/}}
+\hypersetup{
+ pdfauthor={Noboru Murata},
+ pdftitle={A geometrical extension of the Bradley-Terry model},
+ pdfkeywords={information geometry, Bradley-Terry model},
+ pdfsubject={},
+ pdfcreator={Emacs 28.2 (Org mode 9.6.4)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+
+\section{Introduction}
+\label{sec:org16118c6}
+\subsection{Bradley-Terry model}
+\label{sec:orgc352d1d}
+\begin{frame}[label={sec:orge50f9df}]{Rating Problem}
+\begin{exampleblock}{Win-Loss Standings of MLB (American East)}\label{sec:orgccb0e9b}
+\begin{center}
+\begin{tabular}{l|rrrrr}
+\hline
+ & Yankees & Rays & Red Sox & Blue Jays & Orioles\\[0pt]
+\hline
+Yankees & - & 6 & 8 & 9 & 5\\[0pt]
+Rays & 8 & - & 7 & 8 & 7\\[0pt]
+Red Sox & 6 & 9 & - & 8 & 9\\[0pt]
+Blue Jays & 5 & 4 & 4 & - & \alert{?}\\[0pt]
+Orioles & 7 & 8 & 5 & \alert{?} & -\\[0pt]
+\hline
+\end{tabular}
+\end{center}
+\end{exampleblock}
+\begin{alertblock}<2>{Problem}
+\begin{itemize}
+\item estimate intrinsic strengths of teams
+\item predict results of unobserved matches
+\end{itemize}
+\end{alertblock}
+\end{frame}
+
+\begin{frame}[label={sec:org5218e6f}]{Bradley-Terry Model}
+notations:
+\begin{itemize}
+\item \(i\): a member of \(k\) individuals\\[0pt]
+(\emph{e.g. baseball team})
+\item \(\theta_{i}\): skill of individual \(i\)\\[0pt]
+\emph{(e.g. strength of team)}
+\item probability model (binomial distribution): 
+\begin{equation}
+  \Pr\left\{\text{\(i\) beats \(j\)}\right\}
+  =\Pr(i\succ j)
+  =\frac{\theta_{i}}{\theta_{i}+\theta_{j}},
+\end{equation}
+\emph{(e.g. win-loss probability between teams \(i\) and \(j\))}
+\item \(n_{ij}\): observation,
+i.e. the number of times that \(i\) beats \(j\) \\[0pt]
+(\cite{BradleyTerry1952})
+\end{itemize}
+\end{frame}
+
+\subsection{conventional estimation algorithm}
+\label{sec:orgb892444}
+\begin{frame}[label={sec:org1454c83}]{Estimation Strategy}
+\begin{columns}
+\begin{column}{0.5\columnwidth}
+\begin{itemize}
+\item two sets of binomial distributions
+\begin{itemize}
+\item data: \(\mathcal{D}_{ij}=\{n_{ij},n_{ji}\}\) 
+\begin{equation}
+  P^{(b)}_{\mathcal{D}_{ij}}(i\succ j)
+  =\frac{n_{ij}}{n_{ij}+n_{ji}}
+\end{equation}
+\item model: \(\theta_{ij}=\{\theta_i,\theta_j\}\) 
+\begin{equation}
+  P^{(b)}_{\theta_{ij}}(i\succ j)
+  =\frac{\theta_i}{\theta_i+\theta_j}
+\end{equation}
+\end{itemize}
+\item compare distributions
+\begin{itemize}
+\item discrepancy (KL divergence):
+\begin{equation}
+  \mathrm{Dist}(\{n_{ij},n_{ji}\},\{\theta_i,\theta_j\})
+  =D(P^{(b)}_{\mathcal{D}_{ij}},P^{(b)}_{\theta_{ij}})
+\end{equation}
+\end{itemize}
+\end{itemize}
+\end{column}
+\begin{column}{0.5\columnwidth}
+\begin{center}
+\includegraphics[width=.85\textwidth]{binomial_comp}
+\end{center}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[label={sec:org9ad38ba}]{Estimation Method}
+conventional algorithm
+(\cite{HastieTibshirani1998})
+\begin{itemize}
+\item objectives: likelihood of binomial distribution
+\begin{align}
+  L(\theta)
+  &=-\sum_{i<j}\left(
+    n_{ij}\log\frac{\theta_{i}}{\theta_{i}+\theta_{j}}+
+    n_{ji}\log\frac{\theta_{j}}{\theta_{i}+\theta_{j}}
+    \right)\\
+  &=\sum_{i<j}(n_{ij}+n_{ji})
+    D(P^{(b)}_{\mathcal{D}_{ij}},P^{(b)}_{\theta_{ij}})
+    +const.
+\end{align}
+\item iterative updates:
+\begin{itemize}
+\item calculate:
+\begin{equation}
+  \theta_{i}
+  \leftarrow\frac{\sum_{j\not=i}n_{ij}}
+  {\sum_{j\not=i}\frac{n_{ij}+n_{ji}}{\theta_{i}+\theta_{j}}}
+\end{equation}
+\item re-normalize: \(\|\theta\|_{1}=1\)
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\section{Problem Formulation}
+\label{sec:org62bed98}
+\subsection{geometrical overview}
+\label{sec:org9e8f4ed}
+\begin{frame}[label={sec:org0327143}]{Geometrical Approach}
+basic ideas (\cite{FujimotoHinoMurata2011})
+\begin{itemize}
+\item BT model parameter can be identified with a multinomial distribution
+\item <2-| alert@2>[] a point on the probability simplex
+\item pairwise comparison data can be regarded as 
+incomplete data from multinomial distributions
+\item <2-| alert@2>[] an \(m\)-flat manifold in the probability simplex
+\end{itemize}
+\begin{alertblock}<3->{\(em\)-Algorithm (Amari, 1995)}
+optimal parameter can be obtained by means of
+iterative \(e\) and \(m\)-projections
+\end{alertblock}
+\end{frame}
+
+\begin{frame}[label={sec:org01b14c4}]{Probability Simplex}
+\begin{columns}
+\begin{column}{0.5\columnwidth}
+\begin{center}
+  \includegraphics<+>[page=1,width=\textwidth]{simplex}%
+  \includegraphics<+>[page=2,width=\textwidth]{simplex}%
+  \includegraphics<+>[page=3,width=\textwidth]{simplex}%
+\end{center}
+\end{column}
+\begin{column}{0.5\columnwidth}
+example: \(k=3\)
+\begin{itemize}
+\item <2-> \(\theta_i\geq0\) (positivity)
+\item <2-> \(\sum\theta_i=1\) (normalized)
+\item <3-> estimate \(\hat\theta\) \\[0pt]
+(a point in the simplex)
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[label={sec:org7ceb419}]{Conventional Loss}
+\begin{columns}
+\begin{column}{0.5\columnwidth}
+\begin{center}
+  % \includegraphics<+>[page=1,width=\textwidth]{triangle}%
+  \includegraphics<+>[page=2,width=\textwidth]{triangle}%
+  \includegraphics<+>[page=1,width=\textwidth]{conventional}%
+  \includegraphics<+>[page=2,width=\textwidth]{conventional}%
+  \includegraphics<+>[page=3,width=\textwidth]{conventional}%
+  \includegraphics<+>[page=4,width=\textwidth]{conventional}%
+\end{center}
+\end{column}
+\begin{column}{0.5\columnwidth}
+\begin{itemize}
+\item <1-> \(\hat\theta\): current estimate
+\item <2-> construct \(P^{(b)}_{\mathcal{D}_{ij}}\)
+from \(\mathcal{D}_{ij}=\{n_{ij},n_{ji}\}\)
+\item <3-> construct \(P^{(b)}_{\theta_{ij}}\)
+from \(\theta_{ij}=\{\theta_i,\theta_j\}\)
+\item <4-|alert@4-> compare all the possible pairs
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[label={sec:org5922d5c}]{Conventional Algorithm}
+\begin{columns}
+\begin{column}{0.5\columnwidth}
+\begin{center}
+  \includegraphics<+>[page=5,width=\textwidth]{conventional}%
+  \includegraphics<+>[page=6,width=\textwidth]{conventional}%
+  \includegraphics<+>[page=7,width=\textwidth]{conventional}%
+\end{center}        
+\end{column}
+\begin{column}{0.5\columnwidth}
+\begin{itemize}
+\item <1-> initialize parameter
+\item <2-> update parameter to reduce total loss
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[label={sec:org89ca733}]{Geometrical Loss}
+\begin{columns}
+\begin{column}{0.5\columnwidth}
+\begin{center}
+  % \includegraphics<+>[page=1,width=\textwidth]{triangle}%
+  \includegraphics<+>[page=2,width=\textwidth]{triangle}%
+  \includegraphics<+>[page=1,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=2,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=3,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=4,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=5,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=6,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=7,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=8,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=9,width=\textwidth]{geometrical}%
+\end{center}
+\end{column}
+
+\begin{column}{0.5\columnwidth}
+\begin{itemize}
+\item <1-> \(\hat\theta\): current estimate
+\item <2-> for \(\mathcal{D}_{ij}=\{n_{ij},n_{ji}\}\),
+\item <3-|alert@3,5,7>[] consider a set of \(\theta\)'s
+\begin{equation}
+  D_{ij}
+  =\{\theta|\theta_i\!:\!\theta_j=n_{ij}\!:\!n_{ji}\},
+\end{equation}
+which are consistent with pairwise comparison
+\item <4-|alert@4,6,8-9> choose the closest point \(\tilde\theta_{ij}\) in \(D_{ij}\) 
+from \(\hat\theta\)
+\item <10-|alert@10-> obtain \(\hat\theta\)
+by integrating all \(\tilde\theta_{ij}\)'s
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[label={sec:org014b3ec}]{Geometrical Algorithm}
+\begin{columns}
+\begin{column}{0.5\columnwidth}
+\begin{center}
+  \includegraphics<+>[page=10,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=11,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=12,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=13,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=14,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=15,width=\textwidth]{geometrical}%
+  \includegraphics<+>[page=16,width=\textwidth]{geometrical}%
+\end{center}
+\end{column}
+\begin{column}{0.5\columnwidth}
+\begin{itemize}
+\item <1-> initialize parameter
+\item <2,4,6,7> \(e\)-projection:
+\begin{equation}
+  \tilde\theta_{ij}=\arg\min_{\theta\in D_{ij}}
+  D(P_{\theta},P_{\hat\theta})
+\end{equation}
+\item <3,5,7> \(m\)-projection:
+\begin{equation}
+  \hat\theta=\arg\min_{\theta}
+  \sum_{i,j}w_{ij}D(P_{\tilde\theta_{ij}},P_{\theta})
+\end{equation}
+where \(w_{ij}=(n_{ij}+n_{ji})\)
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[label={sec:orgdc2a11c}]{Decomposition of Multinomial Distribution}
+\begin{columns}
+\begin{column}{0.5\columnwidth}
+\begin{center}
+  \includegraphics<+>[width=\textwidth]{decomp}%
+\end{center}
+\end{column}
+\begin{column}{0.5\columnwidth}
+\begin{equation}
+  P(\theta)=P_{\theta_{ij}}^{(b)}
+  \times P_{\theta_{ij}}^{(r)}
+\end{equation}
+\begin{itemize}
+\item \(P_{\theta_{ij}}^{(b)}\): binomial distribution
+on \(i\) and \(j\)
+\item \(P_{\theta_{ij}}^{(r)}\): multinomial distribution 
+on \(\{i,j\}\) and the rest
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[label={sec:org82052a7}]{What is essential difference?}
+\begin{itemize}
+\item conventional method
+\begin{equation}
+  \hat\theta
+  =\arg\min_{\theta}
+  \sum_{i<j} w_{ij}D(P_{\mathcal{D}_{ij}}^{(b)},P_{\theta_{ij}}^{(b)})
+\end{equation}
+\item geometrical method
+\begin{equation}
+  \hat\theta
+  =\arg\min_{\theta}
+  \sum_{i<j}w_{ij}D(P_{\mathcal{D}_{ij}}^{(b)},P_{\theta_{ij}}^{(b)})
+  +\sum_{i<j}w'_{ij}D(P_{\mathcal{D}_{ij}}^{(r)},P_{\theta_{ij}}^{(r)})
+\end{equation}
+\begin{itemize}
+\item this objective has a unique solution
+\item the second term works as a regularization
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\section{Illustrative Example}
+\label{sec:orgaccb373}
+\subsection{reguralization property}
+\label{sec:org7d98b76}
+\begin{frame}[label={sec:org716a675}]{Estimation Difference}
+\begin{exampleblock}{Example from Hastie \& Tibshirani (1998)}\label{sec:org9cf1193}
+\begin{center}
+\begin{tabular}{r|rrrr}
+\hline
+ & 1 & 2 & 3 & 4\\[0pt]
+\hline
+1 & - & 0.56 & 0.51 & 0.60\\[0pt]
+2 & 0.44 & - & 0.96 & 0.44\\[0pt]
+3 & 0.49 & 0.04 & - & 0.59\\[0pt]
+4 & 0.40 & 0.56 & 0.41 & -\\[0pt]
+\hline
+\end{tabular}
+\end{center}
+\end{exampleblock}
+\begin{itemize}
+\item <2-> conventional estimates:
+\begin{equation}
+  \{\hat\theta_{i}\}=\{0.29,0.34,0.16,0.21\}
+\end{equation}
+\item <3-> geometrical estimates:
+\begin{equation}
+  \{\hat\theta_{i}\}=\{0.32,0.29,0.15,0.23\}
+\end{equation}
+\end{itemize}
+\end{frame}
+\begin{frame}[label={sec:org88074be}]{Effect of Regularization}
+\begin{itemize}
+\item conventional estimates: \(\{0.29,0.34,0.16,0.21\}\)
+\item geometrical estimates: \(\{0.32,0.29,0.15,0.23\}\)
+\end{itemize}
+\begin{center}
+\begin{center}
+\begin{tabular}{rr|rr|l|ll}
+\hline
+\(i\) & \(j\) & \(P(i\succ j)\) & \(P(j\succ i)\) & majority rule & conv. & geom.\\[0pt]
+\hline
+1 & 2 & 0.56 & 0.44 & \(1 \succ 2\) & \(\times\) & \(\surd\)\\[0pt]
+1 & 3 & 0.51 & 0.49 & \(1 \succ 3\) & \(\surd\) & \(\surd\)\\[0pt]
+1 & 4 & 0.60 & 0.40 & \(1 \succ 4\) & \(\surd\) & \(\surd\)\\[0pt]
+2 & 3 & 0.96 & 0.04 & \(2 \succ 3\) & \(\surd\) & \(\surd\)\\[0pt]
+2 & 4 & 0.44 & 0.56 & \(2 \prec 4\) & \(\times\) & \(\times\)\\[0pt]
+3 & 4 & 0.59 & 0.41 & \(3 \succ 4\) & \(\times\) & \(\times\)\\[0pt]
+\hline
+\end{tabular}
+\end{center}
+\end{center}
+\end{frame}
+
+\subsection{weight adaptation with local influence}
+\label{sec:org9402a2b}
+\begin{frame}[label={sec:org46f6033}]{Weight Adaptation}
+\begin{itemize}
+\item generic form of objective
+\begin{equation}
+  L(\theta)
+  =\sum_{i<j} w_{ij}D(P_{\mathcal{D}_{ij}},P_{\theta})
+  % =\sum_{i<j} w_{ij}D(P_{\mathcal{D}_{ij}},P_{\theta_{ij}})
+\end{equation}
+\item weight \(w_{ij}\) reflects confidence of data \(\mathcal{D}_{ij}\)
+\item possible weights 
+\begin{itemize}
+\item data size of pairwise comparison
+\item empirical influence of data
+\item etc
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label={sec:org7a774cd}]{Conventional Method}
+proposal in Hastie \& Tibshirani (1998)
+\begin{columns}
+\begin{column}{0.5\columnwidth}
+\begin{center}
+  \includegraphics<+>[page=1,width=\textwidth]{influence}%
+  \includegraphics<+>[page=2,width=\textwidth]{influence}%
+\end{center}
+\end{column}
+\begin{column}{0.5\columnwidth}
+\begin{itemize}
+\item <1-> binomial influence
+\begin{align}
+  w_{ij}
+  &\rightarrow\frac{w_{ij}}{\alpha(1-\alpha)}\\
+  \alpha
+  &=\frac{n_{ij}}{n_{ij}+n_{ji}}
+\end{align}
+\item <2-> weights are renormalized so as to equalize influences from
+variances of pairwise comparisons
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[label={sec:org044c7b1}]{Local Influence}
+\begin{columns}
+\begin{column}{0.5\columnwidth}
+\begin{center}
+  \includegraphics<+>[page=3,width=\textwidth]{influence}%
+  \includegraphics<+>[page=4,width=\textwidth]{influence}%
+  \includegraphics<+->[page=5,width=\textwidth]{influence}%
+\end{center}
+\end{column}
+\begin{column}{0.5\columnwidth}
+\begin{itemize}
+\item <1-> influence around \(\hat\theta\) should be considered
+\item <2-> fluctuation of data manifold
+\item <3-> fluctuation along \(e\)-geodesic is regarded as essential
+influence
+\item <4-> weights are determined so as to equalize those influences with
+iterative manner
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[label={sec:orgb3cfbea}]{Numerical Experiments}
+\begin{exampleblock}{Synthetic data in Hastie \& Tibshirani (1998)}\label{sec:org6d1fa32}
+\begin{align}
+  P^*_A
+  &=\left\{\pi^*_i \biggm| \pi^*_1=\frac{1.5}{k},
+    \pi^*_j=\frac{1-\pi^*_1}{k-1} \ (j=2,\dots,k)
+    \right\} \\
+  P^*_B
+  &=\left\{\pi^*_i \biggm| \pi^*_1=\frac{2.85}{k},\right.\\
+  &\phantom{=====}\left.
+    \pi^*_j=\frac{0.95-\pi^*_1}{k/2-1}\,\left(j=2,\dots,\frac{k}{2}\right),
+    \pi^*_j=\frac{0.05}{k/2}\,\left(j=\frac{k}{2}\!+\! 1,\dots,k\right) \right\} \\
+  P^*_C
+  &=\left\{ \pi^*_i \biggm| \pi^*_1=0.7125, \pi^*_2=0.2375,
+    \pi^*_j=\frac{0.05}{k-2}\,(j = 3, \dots,k)\right\}
+\end{align}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}[label={sec:org84b0638}]{Numerical Experiments}
+\begin{center}
+  \includegraphics[width=.29\textwidth,trim=0 40 20 40,clip=true]{kl_earlier_a}
+  \includegraphics[width=.29\textwidth,trim=0 40 20 40,clip=true]{kl_earlier_b}
+  \includegraphics[width=.29\textwidth,trim=0 40 20 40,clip=true]{kl_earlier_c}
+  \\
+  \hspace{.07\textwidth}\(P^*_A\)\hspace{.27\textwidth}\(P^*_B\)\hspace{.27\textwidth}\(P^*_C\)
+  \\[4pt]
+  plots of the number of individuals vs.\ \(D(P^*,P_{\hat\theta})\) for \(500\) trials.
+  \\
+  (solid:proposed, dashed:unit, dotted:\# of data,  dotdash:H\&T)
+\end{center}
+\end{frame}
+
+\subsection{grouped ranking data}
+\label{sec:orgba23e82}
+\begin{frame}[label={sec:orgc35c1fc}]{Grouped Ranking Data}
+\begin{exampleblock}{Movie Rating Data}\label{sec:org38b511a}
+\begin{center}
+\begin{tabular}{l|rrrrl}
+ & Toy Story & Star Wars & Braveheart & The Saint & \(\ldots\)\\[0pt]
+\hline
+Anne & 4 & 5 &  & 3 & \\[0pt]
+Bob &  & 5 & 4 & 2 & \\[0pt]
+Cathy & 5 &  &  & 3 & \\[0pt]
+David & 3 & 4 & 3 & 3 & \\[0pt]
+\(\vdots\) &  &  &  &  & \\[0pt]
+\end{tabular}
+\end{center}
+\end{exampleblock}
+\begin{quote}<2> %% notes on data
+characteristics of data
+\begin{itemize}
+\item each \alert{user} gives a rate to each \alert{item}
+\item some rates are not available
+\item rates are relative values, not absolute evaluation
+\end{itemize}
+\end{quote}
+\end{frame}
+\begin{frame}[label={sec:org13b6d5b}]{Grouped Ranking Data}
+\begin{exampleblock}{Movie Rating Data}\label{sec:org6273bd0}
+\begin{center}
+\begin{tabular}{l|rrrrl}
+ & Toy Story & Star Wars & Braveheart & The Saint & \(\ldots\)\\[0pt]
+\hline
+Anne & 4 & 5 &  & 3 & \\[0pt]
+Bob &  & 5 & 4 & 2 & \\[0pt]
+Cathy & 5 &  &  & 3 & \\[0pt]
+David & 3 & 4 & 3 & 3 & \\[0pt]
+\(\vdots\) &  &  &  &  & \\[0pt]
+\end{tabular}
+\end{center}
+\end{exampleblock}
+\begin{alertblock}{Problem}
+\begin{itemize}
+\item estimate preference levels of items quantitatively
+\item predict preference levels of unrated items
+\end{itemize}
+\end{alertblock}
+\end{frame}
+\begin{frame}[label={sec:orgf065d68}]{Hidden Ordering}
+marginalize with respect to hidden ordering (\cite{HinoFujimotoMurata2010})
+
+\begin{itemize}
+\item observed ranking
+\begin{equation}
+  \{i=j\succ\cdots\succ k\}
+\end{equation}
+\item possible hidden ordering (unobserved)
+\begin{equation}
+  \{i\succ j\succ\cdots\succ k\}
+  \text{ or }
+  \{j\succ i\succ\cdots\succ k\}
+\end{equation}
+\item marginalize with possible ordering 
+\begin{equation}
+  P(i=j\succ\cdots\succ k)
+  =P(i\succ j\succ\cdots\succ k)
+  +P(j\succ i\succ\cdots\succ k)
+\end{equation}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label={sec:orge44554a}]{Problem Formulation}
+notations:
+\begin{itemize}
+\item \(R_i^n\): 
+a rate of item \(i\) evaluated by user \(n\)
+\item \(\mathcal{D}^n=\{R_1^n,R_2^n,\dots\}\): 
+a set of rates given by user \(n\)
+\item \(\mathcal{D}=\{\mathcal{D}^1,\mathcal{D}^2,\dots\}\): 
+all data
+\medskip
+\item \(\theta_i\): preference parameter for item \(i\)
+\begin{itemize}
+\item \(\theta_i\ge0\) (positivity)
+\item \(\sum\theta_i=1\) (normalized)
+\end{itemize}
+\item \(\mathcal{S}(\mathcal{D}^n)\):
+a set of possible permutations for \(\mathcal{D}^n\)
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label={sec:org1af96c9}]{Grouped-Ranking Model}
+\begin{itemize}
+\item likelihood:
+\begin{align}
+  P(\mathcal{D})
+  &=\sum_{n}\sum_{\pi\in\mathcal{S}(\mathcal{D}^n)}
+    P(\pi)P(\mathcal{D}^n|\pi)\\
+  &=\sum_{n}\sum_{\pi\in\mathcal{S}(\mathcal{D}^n)}
+    P(\pi)\prod_{i\in\pi}\frac{\theta_i}{\sum_{j\le i\in\pi}\theta_j}
+\end{align}
+where \(P(\pi)\) is a prior of permutations\\[0pt]
+(marginalized with respect to all the possible ranking in
+equivalently rated items)
+\item the number of permutations increases 
+with the number of items \alert{exponentially}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label={sec:orgd069a0a}]{Approximation}
+\begin{itemize}
+\item bound below with tractable calculation
+\item exclude marginalization of permutation
+lower bound of likelihood:
+\begin{itemize}
+\item \(\Lambda_r^n=\{i|R_i^n=r\}\): an index set of items with rate \(r\)
+by user \(n\)
+\item \(\Theta_r^n=\sum_{i\in \Lambda_r^n}\theta_i\): group preference
+parameter\\[0pt]
+(total preference of the equivalently rated items)
+\end{itemize}
+\begin{align}
+  \underline{P}(\mathcal{D})
+  =\sum_{n}\prod_{r}\prod_{i\in \Lambda_r^n}
+  \frac{\theta_i}{\sum_{s\le r}\Theta_s^n}
+\end{align}
+\alert{maximizing lower bound is still computationally tedious}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label={sec:org607cc6c}]{Further Approximation}
+\begin{itemize}
+\item decompose the objective into small optimization problems: 
+\begin{align}
+  &\text{minimize}\quad\sum_r|\Lambda_r^n|\log\sum_{s\ge r}\Theta_s^n
+    \quad\text{subject to}\quad\sum_r\Theta_r^n=1\\
+  &\text{maximize}\quad\sum_i\log\theta_i
+    \quad\text{subject to}\quad\sum_i\theta_i=1
+\end{align}
+\item algorithm
+\begin{itemize}
+\item find solutions of the minimization problems
+\item find a parameter of the maximization problem 
+which is as consistent with those solutions as possible
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label={sec:org941c208}]{Estimation Method}
+\begin{columns}
+\begin{column}{0.5\columnwidth}
+\begin{center}
+  \includegraphics<+>[page=1,width=\textwidth]{group}%
+  \includegraphics<+>[page=2,width=\textwidth]{group}%
+  \includegraphics<+>[page=3,width=\textwidth]{group}%
+\end{center}
+\end{column}
+\begin{column}{0.5\columnwidth}
+\begin{itemize}
+\item <1-> solutions of minimization problems
+\begin{equation}
+  \mathcal{D}^n=\{\theta|\sum_{i\in\Lambda^n_r}\theta_i=const.\}
+\end{equation}
+\item <3-> find a estimate with geometrical BT method
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[label={sec:orga5ac0e2}]{Item Mapping}
+\begin{columns}
+\begin{column}{0.6\columnwidth}
+\begin{center}
+  \includegraphics[width=.9\textwidth]{NECO-11-09-1129-Figure_6}
+\end{center}
+\end{column}
+\begin{column}{0.4\columnwidth}
+\begin{itemize}
+\item preference parameters are modeled as
+\begin{align}
+  \theta_{iu}
+  &=v_{i}\cdot w_{u}\\
+  &\quad v_{i}\in\mathbb{R}^{d}\text{: item \(i\)},\\
+  &\quad w_{u}\in\mathbb{R}^{d}\text{: user \(u\)}
+\end{align}
+\item \(\circ\) movies
+\item typical two axes are used
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[label={sec:org916c776}]{Item-User Mapping}
+\begin{columns}
+\begin{column}{0.6\columnwidth}
+\begin{center}
+  \includegraphics[width=.9\textwidth]{NECO-11-09-1129-Figure_8}%
+\end{center}
+\end{column}
+\begin{column}{0.4\columnwidth}
+\begin{itemize}
+\item \(\circ\) rated by user\textasciitilde{}\(114\)
+\item \(\diamond\) not rated
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\section{Conclusion}
+\label{sec:org44c9e3c}
+\begin{frame}[label={sec:org4d493c4}]{Concluding Remarks}
+we presented the following
+\begin{itemize}
+\item a geometrical reformulation of the estimation procedure 
+for the Bradley-Terry model
+\item a robust weight adaptation method
+\item an approximate estimation for grouped ranking data
+\end{itemize}
+
+in addition, possible application would be
+\begin{itemize}
+\item utilizing \(U\)-divergence based on \(m\)-flat nature of data
+manifolds
+\end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{References}
+\printbibliography[heading=none]
+\end{frame}
+\end{document}
